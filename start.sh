@@ -36,3 +36,32 @@ function registry() {
 	docker push 127.0.0.1:5000/datascience-notebook
 }
 
+function reverse_proxy() {
+	echo "${green}[*] Manage reverse proxy with letsencrypt SSL certificates${reset}"
+	echo "${purple}[+] Starting jwilder/nginx-proxy${reset}"
+	docker run --detach \
+		--name nginx-proxy \
+		--publish 80:80 \
+		--publish 443:443 \
+		--volume /etc/nginx/certs \
+		--volume /etc/nginx/vhost.d \
+		--volume /usr/share/nginx/html \
+		--volume /var/run/docker.sock:/tmp/docker.sock:ro \
+		jwilder/nginx-proxy
+	echo "${purple}[+] Starting jwilder/nginx-proxy-letsencrypt${reset}"
+	# if necessary use: --env "DEBUG=true" \
+	docker run --detach \
+		--name nginx-proxy-letsencrypt \
+		--volumes-from nginx-proxy \
+		--volume /var/run/docker.sock:/var/run/docker.sock:ro \
+		--env "$DEFAULT_EMAIL" \
+		jrcs/letsencrypt-nginx-proxy-companion
+	echo "${purple}[+] Starting grafana with nginx-proxy configuration${reset}"
+	docker run --detach \
+		--name grafana \
+		--env "VIRTUAL_HOST=grafana.$DOMAIN" \
+		--env "VIRTUAL_PORT=3000" \
+		--env "LETSENCRYPT_HOST=grafana.$DOMAIN" \
+		--env "LETSENCRYPT_EMAIL=$DEFAULT_EMAIL" \
+			grafana/grafana
+}
