@@ -56,14 +56,6 @@ function reverse_proxy() {
 		--volume /var/run/docker.sock:/var/run/docker.sock:ro \
 		--env "$DEFAULT_EMAIL" \
 		jrcs/letsencrypt-nginx-proxy-companion
-	echo "${purple}[+] Starting grafana with nginx-proxy configuration${reset}"
-	docker run --detach \
-		--name grafana \
-		--env "VIRTUAL_HOST=grafana.$DOMAIN" \
-		--env "VIRTUAL_PORT=3000" \
-		--env "LETSENCRYPT_HOST=grafana.$DOMAIN" \
-		--env "LETSENCRYPT_EMAIL=$DEFAULT_EMAIL" \
-			grafana/grafana
 }
 
 function main() {
