@@ -65,3 +65,12 @@ function reverse_proxy() {
 		--env "LETSENCRYPT_EMAIL=$DEFAULT_EMAIL" \
 			grafana/grafana
 }
+
+function main() {
+	flush
+	registry
+	reverse_proxy
+}
+
+main
+echo "${green}[*] Done!${reset}"
