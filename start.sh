@@ -22,3 +22,17 @@ function flush() {
 	docker volume rm --force $(docker volume ls -q)  
 }
 
+function registry() {
+	# Add docker registry listening on localhost
+	echo "${green}[*] Adding local docker registry${reset}"
+	docker run --detach -p 127.0.0.1:5000:5000 --restart=always --name registry registry:2
+	# Add some docker images to local registry
+	echo "${green}[*] Adding jupyter/datascience-notebook to local registry${reset}"
+	echo "${purple}[+] Pulling jupyter/datascience-notebook${reset}"
+	docker pull jupyter/datascience-notebook:latest
+	echo "${purple}[+] Adding tag for jupyter/datascience-notebook on local registry${reset}"
+	docker tag jupyter/datascience-notebook:latest 127.0.0.1:5000/datascience-notebook
+	echo "${purple}[+] Pushing jupyter/datascience-notebook on local registry${reset}"
+	docker push 127.0.0.1:5000/datascience-notebook
+}
+
