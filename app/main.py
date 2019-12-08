@@ -1,11 +1,45 @@
-import werkzeug.exceptions
+from functools import wraps
 
-from flask import Flask, render_template
+import werkzeug.exceptions
+from flask import Flask
+from flask import render_template, redirect, url_for
+from flask_admin import Admin
+from flask_login import LoginManager
+from flask_login.utils import current_user
+from flask_mail import Mail
+
+from src.admin_interface.initialize import initialize_admin
+from src.db_interface.config import Config
+from src.db_interface.models import initialize_db, Users, MyAdminView
 
 app = Flask(__name__)
+app.config.from_object(Config)
+mail = Mail(app)
+db = initialize_db(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+admin = Admin(app, name='Tuxae Jupyter Manager', index_view=MyAdminView(url='/admin'))
+initialize_admin(admin, db)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(user_id)
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+@app.route('/', methods=['GET'])
+@login_required
 def index():
     return render_template('index.html')
 

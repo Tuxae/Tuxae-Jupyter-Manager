@@ -1,1 +1,6 @@
 flask
+flask-admin
+flask-login
+flask-sqlalchemy
+flask-mail
+passlib
