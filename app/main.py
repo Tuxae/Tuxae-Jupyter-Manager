@@ -11,7 +11,10 @@ from flask_mail import Mail
 from src.admin_interface.initialize import initialize_admin
 from src.db_interface.config import Config
 from src.db_interface.models import initialize_db, Users, MyAdminView
+from src.db_interface.users import create_user, user_exists
 from src.auth.auth import is_fake_login_form, get_admin_user
+from src.auth.register import is_fake_register_form, password_validator
+from src.mail.sender import send_register_mail
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -65,7 +68,19 @@ def login():
 def register():
     if request.method == "GET":
         return render_template('register.html')
-    return render_template('register.html')
+    if is_fake_register_form(request.form):
+        flash('A wrong form has been sent.', 'error')
+        return redirect(url_for('register'))
+    if not password_validator(request.form):
+        flash('Password were different.', 'error')
+        return redirect(url_for('register'))
+    email, password = request.form['email'], request.form['password1']
+    if user_exists(email):
+        flash('This email is already used.', 'error')
+        return redirect(url_for('register'))
+    new_user = create_user(db, email, password)
+    send_register_mail(mail, new_user)
+    return redirect(url_for('index'))
 
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
