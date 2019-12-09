@@ -4,3 +4,4 @@ flask-login
 flask-sqlalchemy
 flask-mail
 passlib
+python-dotenv

@@ -1,4 +1,5 @@
 from functools import wraps
+from dotenv import load_dotenv
 
 import werkzeug.exceptions
 from flask import Flask
@@ -12,6 +13,7 @@ from src.admin_interface.initialize import initialize_admin
 from src.db_interface.config import Config
 from src.db_interface.models import initialize_db, Users, MyAdminView
 
+load_dotenv()
 app = Flask(__name__)
 app.config.from_object(Config)
 mail = Mail(app)
