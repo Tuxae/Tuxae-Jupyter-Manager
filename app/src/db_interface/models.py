@@ -21,7 +21,7 @@ class Users(db.Model, UserMixin):
     token_reset = db.Column(db.String(200), unique=False, nullable=True)
 
     def __repr__(self):
-        return f'<{self.__class__.__name__} {self.name}>'
+        return f'<{self.__class__.__name__} {self.email}>'
 
 
 class WhitelistDomains(db.Model, UserMixin):
