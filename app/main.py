@@ -3,10 +3,10 @@ from dotenv import load_dotenv
 
 import werkzeug.exceptions
 from flask import Flask
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request, flash
 from flask_admin import Admin
 from flask_login import LoginManager
-from flask_login.utils import current_user
+from flask_login.utils import current_user, login_user, logout_user
 from flask_mail import Mail
 
 from src.admin_interface.initialize import initialize_admin
@@ -62,6 +62,13 @@ def forgot_password():
     if request.method == "GET":
         return render_template('forgot-password.html')
     return render_template('forgot-password.html')
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.errorhandler(404)
