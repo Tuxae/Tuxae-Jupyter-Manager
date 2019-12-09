@@ -1,6 +1,9 @@
 from random import choice
 from string import ascii_uppercase, digits
 from os import environ
+from dotenv import load_dotenv
+
+load_dotenv()
 
 """ Default """
 SECRET_KEY = ''.join(choice(ascii_uppercase + digits) for _ in range(30))
