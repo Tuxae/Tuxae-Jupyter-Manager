@@ -57,6 +57,13 @@ def register():
     return render_template('register.html')
 
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == "GET":
+        return render_template('forgot-password.html')
+    return render_template('forgot-password.html')
+
+
 @app.errorhandler(404)
 def handle_404(err: werkzeug.exceptions.NotFound):
     return render_template('404.html'), 404
