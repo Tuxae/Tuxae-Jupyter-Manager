@@ -1,7 +1,7 @@
 from functools import wraps
-from dotenv import load_dotenv
 
 import werkzeug.exceptions
+from dotenv import load_dotenv
 from flask import Flask
 from flask import render_template, redirect, url_for, request, flash
 from flask_admin import Admin
