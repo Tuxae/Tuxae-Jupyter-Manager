@@ -5,9 +5,9 @@ from flask_login import UserMixin
 from flask_login.utils import current_user
 from flask_sqlalchemy import SQLAlchemy
 
-
 from src.db_interface.config import pwd_context
 from src.db_interface.secret import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD
+from src.mail.parser import email_validator, parse_valid_email, EmailException
 
 db = SQLAlchemy()
 
@@ -94,8 +94,11 @@ def create_default_user():
     users = Users.query.all()
     if len(users) > 0:
         return
-    password = pwd_context.hash(DEFAULT_ADMIN_PASSWORD)
-    kwargs = {'username': DEFAULT_ADMIN_USERNAME, 'email': DEFAULT_ADMIN_EMAIL, 'password': password}
+    password = pwd_context.hash(DEFAULT_ADMIN_PASSWORD.encode())
+    if not email_validator(DEFAULT_ADMIN_EMAIL):
+        raise EmailException
+    username = parse_valid_email(DEFAULT_ADMIN_EMAIL)[0]
+    kwargs = {'username': username, 'email': DEFAULT_ADMIN_EMAIL, 'password': password}
     user = Users(**kwargs)
     db.session.add(user)
     db.session.commit()
