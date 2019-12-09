@@ -1,0 +1,11 @@
+# PyCharm
+venv/
+.idea/
+
+# pycache
+__pycache__
+*/__pycache__
+*/*/__pycache__
+
+# env
+.env
