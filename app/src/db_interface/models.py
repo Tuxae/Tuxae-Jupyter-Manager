@@ -23,6 +23,9 @@ class Users(db.Model, UserMixin):
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.email}>'
 
+    def check_password(self, password: str) -> bool:
+        return pwd_context.verify(password, self.password)
+
 
 class WhitelistDomains(db.Model, UserMixin):
     __tablename__ = 'whiltelist_domains'
