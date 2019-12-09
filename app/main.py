@@ -11,6 +11,7 @@ from flask_mail import Mail
 from src.admin_interface.initialize import initialize_admin
 from src.db_interface.config import Config
 from src.db_interface.models import initialize_db, Users, MyAdminView
+from src.auth.auth import is_fake_login_form, get_admin_user
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -46,7 +47,19 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == "GET":
+        return render_template('login.html')
+    if is_fake_login_form(request.form):
+        flash('A wrong form has been sent.', 'error')
+        return redirect(url_for('index'))
+    user = get_admin_user(request.form)
+    if user is not None:
+        login_user(user)
+        flash('You are logged in as an administrator', 'success')
+    else:
+        flash('Authentication failure.', 'error')
+    return redirect(url_for('index'))
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
