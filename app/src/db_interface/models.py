@@ -17,7 +17,7 @@ class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200), unique=True, nullable=False)
     email = db.Column(db.String(200), unique=True, nullable=False)
-    password = db.Column(db.String(200), unique=False, nullable=True)
+    password = db.Column(db.String(200), unique=False, nullable=False)
     token_reset = db.Column(db.String(200), unique=False, nullable=True)
 
     def __repr__(self):
