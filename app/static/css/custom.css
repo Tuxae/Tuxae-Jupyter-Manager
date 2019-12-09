@@ -1,0 +1,4 @@
+.bg-custom {
+	background: url(/static/img/bg.jpeg);
+    background-size: cover;
+}
