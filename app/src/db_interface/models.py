@@ -39,6 +39,8 @@ class WhitelistDomains(db.Model, UserMixin):
 class UsersModelView(ModelView):
     page_size = 5
     column_searchable_list = ['username']
+    column_exclude_list = ['token_reset']
+    form_excluded_columns = ['token_reset']
 
     def is_accessible(self):
         return current_user.is_authenticated
