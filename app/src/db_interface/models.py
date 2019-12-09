@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 from src.db_interface.config import pwd_context
-from src.db_interface.secret import DEFAULT_ADMIN_USERNAME, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD
+from src.db_interface.secret import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD
 
 db = SQLAlchemy()
 
