@@ -1,3 +1,5 @@
+from hashlib import md5
+
 from flask import flash, redirect, url_for
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
@@ -19,6 +21,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(200), unique=True, nullable=False)
     password = db.Column(db.String(200), unique=False, nullable=False)
     token_reset = db.Column(db.String(200), unique=False, nullable=True)
+    logo_url = db.Column(db.String(200), unique=False, nullable=False)
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.email}>'
@@ -39,8 +42,8 @@ class WhitelistDomains(db.Model, UserMixin):
 class UsersModelView(ModelView):
     page_size = 5
     column_searchable_list = ['username']
-    column_exclude_list = ['token_reset']
-    form_excluded_columns = ['token_reset']
+    column_exclude_list = ['token_reset', 'logo_url']
+    form_excluded_columns = ['token_reset', 'logo_url']
 
     def is_accessible(self):
         return current_user.is_authenticated
@@ -103,7 +106,8 @@ def create_default_user():
     if not email_validator(DEFAULT_ADMIN_EMAIL):
         raise EmailException
     username = parse_valid_email(DEFAULT_ADMIN_EMAIL)[0]
-    kwargs = {'username': username, 'email': DEFAULT_ADMIN_EMAIL, 'password': password}
+    logo_url = 'https://2.gravatar.com/avatar/{}?s=400&d=mm'.format(md5(DEFAULT_ADMIN_EMAIL.encode()).hexdigest())
+    kwargs = {'username': username, 'email': DEFAULT_ADMIN_EMAIL, 'password': password, 'logo_url': logo_url}
     user = Users(**kwargs)
     db.session.add(user)
     db.session.commit()
