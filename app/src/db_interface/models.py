@@ -24,9 +24,30 @@ class Users(db.Model, UserMixin):
         return f'<{self.__class__.__name__} {self.name}>'
 
 
+class WhitelistDomains(db.Model, UserMixin):
+    __tablename__ = 'whiltelist_domains'
+    id = db.Column(db.Integer, primary_key=True)
+    domain = db.Column(db.String(200), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.name}>'
+
+
 class UsersModelView(ModelView):
     page_size = 5
     column_searchable_list = ['username']
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, username, **kwargs):
+        flash('Access forbidden ! Please identify yourself.', 'error')
+        return redirect(url_for('login'))
+
+
+class WhitelistDomainsModelView(ModelView):
+    page_size = 5
+    column_searchable_list = ['domain']
 
     def is_accessible(self):
         return current_user.is_authenticated
