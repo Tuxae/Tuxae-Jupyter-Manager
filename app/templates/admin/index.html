@@ -1,0 +1,17 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<h1>Snippet to generate hashes</h1>
+
+<pre>
+<code>from passlib.context import CryptContext
+
+pwd_context = CryptContext(
+    schemes=["pbkdf2_sha256"],
+    deprecated="auto")
+
+password = "password"
+password_hash = pwd_context.hash(password)
+print(password_hash)</code>
+</pre>
+{% endblock %}
