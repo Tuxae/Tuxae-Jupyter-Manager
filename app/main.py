@@ -58,7 +58,10 @@ def login():
     user = get_admin_user(request.form)
     if user is not None:
         login_user(user)
-        flash('You are logged in as an administrator', 'success')
+        if user.is_admin:
+            flash('You are logged in as an administrator', 'success')
+        else:
+            flash('Authentication successful.', 'success')
     else:
         flash('Authentication failure.', 'error')
     return redirect(url_for('index'))
