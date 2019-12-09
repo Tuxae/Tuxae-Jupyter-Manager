@@ -42,6 +42,16 @@
   <!-- Page level custom scripts -->
   <script src="/static/js/demo/chart-area-demo.js"></script>
   <script src="/static/js/demo/chart-pie-demo.js"></script>
+  <script src="/static/js/sweetalert2.js"></script>
+  <script src="/static/js/custom.js"></script>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <script>flash_sweetalert2("{{ message  }}", "Information", "{{ category }}");</script>
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
 
 </body>
 
