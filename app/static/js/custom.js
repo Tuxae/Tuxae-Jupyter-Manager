@@ -1,6 +1,6 @@
 function verify_passwords(){
   if ($("#exampleInputPassword").val() != $("#exampleRepeatPassword").val()) {
-    flash_sweetalert2('Passwords do not match.', 'Informations', 'error')
+    flash_sweetalert2('Passwords do not match.', 'Information', 'error')
   }
   else {
     document.forms['customForm'].submit(); 
