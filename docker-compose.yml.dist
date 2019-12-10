@@ -1,0 +1,51 @@
+version: '2'
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 127.0.0.1:5000:5000
+  nginx-proxy:
+    restart: always
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/nginx/certs
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    links:
+      - registry
+  nginx-proxy-letsencrypt:
+    restart: always
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DEFAULT_EMAIL=jupyter.tuxae@gmail.com
+    links:
+      - nginx-proxy
+  webapp:
+    restart: always
+    build: 
+      context: ./app
+    environment:
+      - VIRTUAL_PORT=80 
+      - VIRTUAL_HOST=<HOST>
+      - LETSENCRYPT_HOST=<HOST>
+      - LETSENCRYPT_EMAIL=<EMAIL>
+      - DEFAULT_ADMIN_EMAIL=<ADMIN_EMAIL>
+      - DEFAULT_ADMIN_PASSWORD=<ADMIN_PASSWORD>
+      - DOCKER_REGISTRY_URI=127.0.0.1:5000
+      - EXTERNAL_URI=<HOST>
+      - MAIL_USERNAME=<EMAIL>
+      - MAIL_PASSWORD=<PASSWORD>
+      - SERVER_DOMAIN=<DOMAIN>
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    links:
+      - nginx-proxy-letsencrypt
