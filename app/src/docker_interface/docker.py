@@ -4,8 +4,15 @@ from src.db_interface.secret import DOCKER_REGISTRY_URI
 
 
 def get_docker_containers(docker_client: docker.client.DockerClient):
-    containers = docker_client.containers.list(all=True)
-    return [container for container in containers if container.image.tags[0].startswith(DOCKER_REGISTRY_URI)]
+    all_containers = docker_client.containers.list(all=True)
+    containers = []
+    for container in all_containers:
+        if not container.image.tags:
+            continue
+        if not container.image.tags[0].startswith(DOCKER_REGISTRY_URI):
+            continue
+        containers.append(container)
+    return containers
 
 
 def get_docker_images(docker_client: docker.client.DockerClient):
