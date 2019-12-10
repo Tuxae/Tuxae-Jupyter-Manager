@@ -13,3 +13,7 @@ def generate_token() -> Tuple[str, datetime]:
 
 def get_logo_url(email: str) -> str:
     return 'https://2.gravatar.com/avatar/{}?s=400&d=mm'.format(md5(email.encode()).hexdigest())
+
+
+def sanitize_username(username: str) -> str:
+    return username.replace('.', '')

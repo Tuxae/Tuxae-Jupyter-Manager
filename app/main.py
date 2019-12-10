@@ -1,6 +1,7 @@
 from functools import wraps
 
 import docker
+import docker.errors
 import werkzeug.exceptions
 from flask import Flask
 from flask import render_template, redirect, url_for, request, flash
@@ -17,8 +18,10 @@ from src.db_interface.config import Config
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists
-from src.docker_interface.docker import get_docker_containers, get_docker_images
+from src.db_interface.secret import SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
+from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image
 from src.mail.sender import send_register_mail
+from src.misc.functions import sanitize_username
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -54,6 +57,68 @@ def index():
     containers = get_docker_containers(docker_client)
     images = get_docker_images(docker_client)
     return render_template('index.html', containers=containers, images=images)
+
+
+@app.route('/containers/create', methods=['POST'])
+@login_required
+def create_container():
+    if list(request.form.keys()) != ['image']:
+        flash('A wrong form has been sent.', 'error')
+        return redirect(url_for('index'))
+    image = request.form['image']
+    if not check_image(image):
+        #  image is not from registry
+        flash('A wrong form has been sent.', 'error')
+        return redirect(url_for('index'))
+    username = sanitize_username(current_user.username)
+    try:
+        environment = [
+            f'VIRTUAL_HOST={username}.{SERVER_DOMAIN}',
+            f'VIRTUAL_PORT=8888',
+            f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}'
+            f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}'
+        ]
+        docker_client.containers.run(
+            image,
+            detach=True,
+            environment=environment,
+            volumes={
+                f'/home/{username}':
+                    {
+                        'bind': '/home/jovyan/work',
+                        'mode': 'rw'
+                    }
+            }
+        )
+        flash('Container successfully created', 'success')
+    except docker.errors.ContainerError:
+        flash('Container Error', 'error')
+    except docker.errors.ImageNotFound:
+        flash('Image not found', 'error')
+    except docker.errors.APIError as e:
+        flash(str(e.explanation), 'error')
+    return redirect(url_for('index'))
+
+
+@app.route('/containers/<string:container_id>/restart', methods=['POST'])
+@login_required
+def restart_container(container_id: str):
+    docker_client.containers.get(container_id).start()
+    return redirect(url_for('index'))
+
+
+@app.route('/containers/<string:container_id>/stop', methods=['POST'])
+@login_required
+def stop_container(container_id: str):
+    docker_client.containers.get(container_id).stop()
+    return redirect(url_for('index'))
+
+
+@app.route('/containers/<string:container_id>/delete', methods=['POST'])
+@login_required
+def delete_container(container_id: str):
+    docker_client.containers.get(container_id).remove(force=True)
+    return redirect(url_for('index'))
 
 
 @app.route('/login', methods=['GET', 'POST'])

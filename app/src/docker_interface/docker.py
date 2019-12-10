@@ -11,3 +11,7 @@ def get_docker_containers(docker_client: docker.client.DockerClient):
 def get_docker_images(docker_client: docker.client.DockerClient):
     images = docker_client.images.list()
     return [image for image in images if image.attrs['RepoTags'][0].startswith(DOCKER_REGISTRY_URI)]
+
+
+def check_image(image: str) -> bool:
+    return image.startswith(DOCKER_REGISTRY_URI)

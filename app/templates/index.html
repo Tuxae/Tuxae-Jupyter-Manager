@@ -128,14 +128,38 @@
                       <td>{{ container.image.tags.0 }}</td>
                       <td>{{ container.status }}</td>
                       <td>
-                          <form method="POST" action="/containers/{{container.id}}/delete">
-                              <button type="submit" class="alert button">Delete</button>
-                          </form>
+                        <div class="row">
+                          <div class="col-lg-3">
+                            <form method="POST" action="/containers/{{container.id}}/restart">
+                              <button type="submit" class="btn btn-success btn-circle btn-lg" style="width: 3rem; height: 3rem">
+                                <i class="fas fa-check"></i>
+                              </button>
+                            </form>
+                          </div>
+                          <div class="col-lg-3">
+                            <button onclick='javascript:flash_sweetalert2(`<pre><code>{{ container.logs().decode() }}</code></pre>`, "Information", "info")' class="btn btn-info btn-circle btn-lg" style="width: 3rem; height: 3rem">
+                              <i class="fas fa-info"></i>
+                            </button>
+                          </div>
+                          <div class="col-lg-3">
+                            <form method="POST" action="/containers/{{container.id}}/stop">
+                              <button type="submit" class="btn btn-warning btn-circle btn-lg" style="width: 3rem; height: 3rem">
+                                <i class="fas fa-hand-paper"></i>
+                              </button>
+                            </form>
+                          </div>
+                          <div class="col-lg-3">
+                            <form method="POST" action="/containers/{{container.id}}/delete">
+                              <button type="submit" class="btn btn-danger btn-circle btn-lg" style="width: 3rem; height: 3rem">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </form>
+                          </div>
                       </td>
                   </tr>
                   {% endfor %}
                   <tr>
-                      <form action="/containers/" method="POST" id="runform">
+                      <form action="/containers/create" method="POST" id="runform">
                           <td></td>
                           <td>
                               <label>
@@ -147,7 +171,7 @@
                               </label>
                           </td>
                           <td>
-                            <a type="submit" form="runform" class="btn btn-success btn-icon-split">
+                            <a onclick='javascript:document.getElementById("runform").submit();' class="btn btn-success btn-icon-split" style="cursor: pointer">
                               <span class="icon text-white-50">
                                 <i class="fas fa-check"></i>
                               </span>
