@@ -12,8 +12,8 @@ DEFAULT_ADMIN_PASSWORD = environ.get('DEFAULT_ADMIN_PASSWORD')
 
 """ Flask Mail """
 MAIL_SERVER = 'smtp.gmail.com'
-MAIL_PORT = 465                 
+MAIL_PORT = 587
 MAIL_USERNAME = environ.get('MAIL_USERNAME')
 MAIL_PASSWORD = environ.get('MAIL_PASSWORD')
-MAIL_USE_TLS = True 
 MAIL_USE_SSL = False
+MAIL_USE_TLS = True

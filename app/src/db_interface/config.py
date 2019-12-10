@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 
-from src.db_interface.secret import SECRET_KEY, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, \
-    MAIL_USE_TLS, MAIL_USE_SSL
+from src.db_interface.secret import SECRET_KEY, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_USE_SSL, \
+    MAIL_USE_TLS
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
@@ -21,5 +21,5 @@ class Config(object):
     MAIL_PORT = MAIL_PORT
     MAIL_USERNAME = MAIL_USERNAME
     MAIL_PASSWORD = MAIL_PASSWORD
-    MAIL_USE_TLS = MAIL_USE_TLS
     MAIL_USE_SSL = MAIL_USE_SSL
+    MAIL_USE_TLS = MAIL_USE_TLS
