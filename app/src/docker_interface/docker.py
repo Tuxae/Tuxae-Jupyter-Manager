@@ -65,7 +65,10 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             environment=environment,
             volumes=volumes
         )
-        flash('Container successfully created', 'success')
+        flash(f'Container successfully created.<br>'
+              f'Your container service will be available soon:<br>'
+              f'<a href="https://{host}">https://{host}</a><br>'
+              f'Check logs for more information.', 'success')
     except docker.errors.ContainerError:
         flash('Container Error', 'error')
     except docker.errors.ImageNotFound:
