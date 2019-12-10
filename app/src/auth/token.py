@@ -9,7 +9,7 @@ def check_token(token: str) -> Optional[Users]:
     if user is None:
         # token is invalid
         return
-    if user.token_expiration > datetime.now():
+    if datetime.now() > user.token_expiration:
         # token has expired
         return
     return user
