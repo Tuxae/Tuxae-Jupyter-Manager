@@ -10,6 +10,7 @@ SECRET_KEY = ''.join(choice(ascii_uppercase + digits) for _ in range(30))
 DEFAULT_ADMIN_EMAIL = environ.get('DEFAULT_ADMIN_EMAIL')
 DEFAULT_ADMIN_PASSWORD = environ.get('DEFAULT_ADMIN_PASSWORD')
 EXTERNAL_URI = environ.get('EXTERNAL_URI')
+DOCKER_REGISTRY_URI = environ.get('DOCKER_REGISTRY_URI')
 
 """ Flask Mail """
 MAIL_SERVER = 'smtp.gmail.com'

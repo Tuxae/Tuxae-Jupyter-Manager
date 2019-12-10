@@ -17,6 +17,7 @@ from src.db_interface.config import Config
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists
+from src.docker_interface.docker import get_docker_containers, get_docker_images
 from src.mail.sender import send_register_mail
 
 app = Flask(__name__)
@@ -50,7 +51,9 @@ def login_required(f):
 @app.route('/', methods=['GET'])
 @login_required
 def index():
-    return render_template('index.html')
+    containers = get_docker_containers(docker_client)
+    images = get_docker_images(docker_client)
+    return render_template('index.html', containers=containers, images=images)
 
 
 @app.route('/login', methods=['GET', 'POST'])
