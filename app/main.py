@@ -1,6 +1,5 @@
 from functools import wraps
 
-import docker
 import docker.errors
 import werkzeug.exceptions
 from flask import Flask
@@ -18,10 +17,8 @@ from src.db_interface.config import Config
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists
-from src.db_interface.secret import SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
-from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image
+from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image, deploy_container
 from src.mail.sender import send_register_mail
-from src.misc.functions import sanitize_username
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -70,34 +67,7 @@ def create_container():
         #  image is not from registry
         flash('A wrong form has been sent.', 'error')
         return redirect(url_for('index'))
-    username = sanitize_username(current_user.username)
-    try:
-        environment = [
-            f'VIRTUAL_HOST={username}.{SERVER_DOMAIN}',
-            f'VIRTUAL_PORT=8888',
-            f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}',
-            f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}',
-            f'JUPYTER_ENABLE_LAB=yes'
-        ]
-        docker_client.containers.run(
-            image,
-            detach=True,
-            environment=environment,
-            volumes={
-                f'/home/{username}':
-                    {
-                        'bind': '/home/jovyan/work',
-                        'mode': 'rw'
-                    }
-            }
-        )
-        flash('Container successfully created', 'success')
-    except docker.errors.ContainerError:
-        flash('Container Error', 'error')
-    except docker.errors.ImageNotFound:
-        flash('Image not found', 'error')
-    except docker.errors.APIError as e:
-        flash(str(e.explanation), 'error')
+    deploy_container(docker_client, image, current_user)
     return redirect(url_for('index'))
 
 

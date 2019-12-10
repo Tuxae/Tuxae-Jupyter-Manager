@@ -1,6 +1,10 @@
 import docker.client
+import docker.errors
+import werkzeug.local
+from flask import flash
 
-from src.db_interface.secret import DOCKER_REGISTRY_URI
+from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
+from src.misc.functions import sanitize_username
 
 
 def get_docker_containers(docker_client: docker.client.DockerClient):
@@ -29,3 +33,40 @@ def get_docker_images(docker_client: docker.client.DockerClient):
 
 def check_image(image: str) -> bool:
     return image.startswith(DOCKER_REGISTRY_URI)
+
+
+def deploy_container(docker_client: docker.client.DockerClient, image: str, current_user: werkzeug.local.LocalProxy) \
+        -> None:
+    username = sanitize_username(current_user.username)
+    if 'datascience-notebook' in image:
+        environment = [
+            f'VIRTUAL_HOST={username}.{SERVER_DOMAIN}',
+            f'VIRTUAL_PORT=8888',
+            f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}',
+            f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}',
+            f'JUPYTER_ENABLE_LAB=yes'
+        ]
+        volumes = {
+            f'/home/{username}':
+                {
+                    'bind': '/home/jovyan/work',
+                    'mode': 'rw'
+                }
+        }
+    else:
+        environment = []
+        volumes = {}
+    try:
+        docker_client.containers.run(
+            image,
+            detach=True,
+            environment=environment,
+            volumes=volumes
+        )
+        flash('Container successfully created', 'success')
+    except docker.errors.ContainerError:
+        flash('Container Error', 'error')
+    except docker.errors.ImageNotFound:
+        flash('Image not found', 'error')
+    except docker.errors.APIError as e:
+        flash(str(e.explanation), 'error')
