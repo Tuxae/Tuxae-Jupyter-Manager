@@ -75,7 +75,7 @@ def create_container():
         environment = [
             f'VIRTUAL_HOST={username}.{SERVER_DOMAIN}',
             f'VIRTUAL_PORT=8888',
-            f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}'
+            f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}',
             f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}'
         ]
         docker_client.containers.run(
