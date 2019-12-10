@@ -52,11 +52,11 @@ class UsersModelView(ModelView):
     form_excluded_columns = ['token', 'token_expiration', 'logo_url']
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, username, **kwargs):
-        flash('Access forbidden ! Please identify yourself.', 'error')
-        return redirect(url_for('login'))
+        flash('Access forbidden ! You are not an administrator.', 'error')
+        return redirect(url_for('index'))
 
 
 class WhitelistDomainsModelView(ModelView):
@@ -64,11 +64,11 @@ class WhitelistDomainsModelView(ModelView):
     column_searchable_list = ['domain']
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, username, **kwargs):
-        flash('Access forbidden ! Please identify yourself.', 'error')
-        return redirect(url_for('login'))
+        flash('Access forbidden ! You are not an administrator.', 'error')
+        return redirect(url_for('index'))
 
 
 class DefaultModelView(ModelView):
@@ -76,31 +76,30 @@ class DefaultModelView(ModelView):
     column_searchable_list = ['username']
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, username, **kwargs):
-        flash('Access forbidden ! Please identify yourself.', 'error')
-        return redirect(url_for('login'))
+        flash('Access forbidden ! You are not an administrator.', 'error')
+        return redirect(url_for('index'))
 
 
 class MyAdminView(AdminIndexView):
+
     @expose('/')
     def index(self):
         return self.render('admin/index.html')
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, username, **kwargs):
-        flash('Access forbidden ! Please identify yourself.', 'error')
-        return redirect(url_for('login'))
+        flash('Access forbidden ! You are not an administrator.', 'error')
+        return redirect(url_for('index'))
 
     def _handle_view(self, username, *args, **kwargs):
-        if not current_user.is_authenticated:
-            return redirect(url_for('login'))
         if not self.is_accessible():
-            flash('Access forbidden ! Please identify yourself.', 'error')
-            return redirect(url_for('login'))
+            flash('Access forbidden ! You are not an administrator.', 'error')
+            return redirect(url_for('index'))
 
 
 def create_default_user():
