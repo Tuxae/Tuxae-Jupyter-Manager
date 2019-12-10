@@ -7,6 +7,7 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_login.utils import current_user, login_user, logout_user
 from flask_mail import Mail
+import docker
 
 from src.admin_interface.initialize import initialize_admin
 from src.db_interface.config import Config
@@ -27,6 +28,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 admin = Admin(app, name='Tuxae Jupyter Manager', index_view=MyAdminView(url='/admin'))
 initialize_admin(admin, db)
+
+docker_client = docker.DockerClient(base_url='unix://var/run/docker.sock')
 
 
 @login_manager.user_loader
