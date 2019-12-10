@@ -15,3 +15,13 @@ function flash_sweetalert2(text, title, category) {
     html: text,
   })
 }
+
+
+function flash_sweetalert2_width_plus(text, title, category) {
+  Swal.fire({
+    width: 1200,
+    type: category,
+    title: title,
+    html: text,
+  })
+}
