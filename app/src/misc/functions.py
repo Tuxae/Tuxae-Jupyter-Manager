@@ -6,7 +6,7 @@ from typing import Tuple
 
 
 def generate_token() -> Tuple[str, datetime]:
-    token = ''.join(choice(ascii_lowercase, ascii_uppercase + digits) for _ in range(40))
+    token = ''.join(choice(ascii_lowercase + ascii_uppercase + digits) for _ in range(40))
     token_expiration = datetime.now() + timedelta(minutes=10)
     return token, token_expiration
 
