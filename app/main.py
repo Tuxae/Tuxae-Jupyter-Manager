@@ -12,6 +12,7 @@ from src.admin_interface.initialize import initialize_admin
 from src.db_interface.config import Config
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists
+from src.db_interface.domains import check_whitelist_domain
 from src.auth.auth import is_fake_login_form, get_admin_user
 from src.auth.register import is_fake_register_form, password_validator
 from src.mail.sender import send_register_mail
@@ -78,6 +79,9 @@ def register():
         flash('Password were different.', 'error')
         return redirect(url_for('register'))
     email, password = request.form['email'], request.form['password1']
+    if not check_whitelist_domain(email):
+        flash('You cannot register with this email, please use a whitelisted domain email.', 'error')
+        return redirect(url_for('register'))
     if user_exists(email):
         flash('This email is already used.', 'error')
         return redirect(url_for('register'))
