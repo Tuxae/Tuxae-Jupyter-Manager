@@ -15,6 +15,7 @@ from src.db_interface.users import create_user, user_exists
 from src.db_interface.domains import check_whitelist_domain
 from src.auth.auth import is_fake_login_form, get_admin_user
 from src.auth.register import is_fake_register_form, password_validator
+from src.auth.token import check_token
 from src.mail.sender import send_register_mail
 
 app = Flask(__name__)
@@ -90,6 +91,24 @@ def register():
     flash('Your account has been created. Check your email to verify your account. Do not forget to check in SPAM as '
           'well.', 'success')
     return redirect(url_for('index'))
+
+
+@app.route('/verify', methods=['GET'])
+def verify():
+    token = request.args.get('token')
+    if token is None:
+        flash('No token to check.', 'error')
+        return redirect(url_for('login'))
+    user = check_token(token)
+    if user is None:
+        flash('Token is either invalid or has expired.', 'error')
+        return redirect(url_for('login'))
+    user.is_verified = True
+    # TODO check token expiration + reset token function
+    user.token = ''
+    db.session.commit()
+    flash('Your account has been verified. You can login now.', 'success')
+    return redirect(url_for('login'))
 
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
