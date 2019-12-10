@@ -1,5 +1,3 @@
-from hashlib import md5
-
 from flask import flash, redirect, url_for
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
@@ -10,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from src.db_interface.config import pwd_context
 from src.db_interface.secret import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD
 from src.mail.parser import email_validator, parse_valid_email, EmailException
-from src.misc.functions import generate_token
+from src.misc.functions import generate_token, get_logo_url
 
 db = SQLAlchemy()
 
@@ -109,7 +107,7 @@ def create_default_user():
     if not email_validator(DEFAULT_ADMIN_EMAIL):
         raise EmailException
     username = parse_valid_email(DEFAULT_ADMIN_EMAIL)[0]
-    logo_url = 'https://2.gravatar.com/avatar/{}?s=400&d=mm'.format(md5(DEFAULT_ADMIN_EMAIL.encode()).hexdigest())
+    logo_url = get_logo_url(DEFAULT_ADMIN_EMAIL)
     token, token_expiration = generate_token()
     kwargs = {
         'username': username,
