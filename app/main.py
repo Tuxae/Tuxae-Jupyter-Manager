@@ -1,5 +1,6 @@
 from functools import wraps
 
+import docker
 import werkzeug.exceptions
 from flask import Flask
 from flask import render_template, redirect, url_for, request, flash
@@ -7,16 +8,15 @@ from flask_admin import Admin
 from flask_login import LoginManager
 from flask_login.utils import current_user, login_user, logout_user
 from flask_mail import Mail
-import docker
 
 from src.admin_interface.initialize import initialize_admin
-from src.db_interface.config import Config
-from src.db_interface.models import initialize_db, Users, MyAdminView
-from src.db_interface.users import create_user, user_exists
-from src.db_interface.domains import check_whitelist_domain
 from src.auth.auth import is_fake_login_form, get_admin_user
 from src.auth.register import is_fake_register_form, password_validator
 from src.auth.token import check_token
+from src.db_interface.config import Config
+from src.db_interface.domains import check_whitelist_domain
+from src.db_interface.models import initialize_db, Users, MyAdminView
+from src.db_interface.users import create_user, user_exists
 from src.mail.sender import send_register_mail
 
 app = Flask(__name__)
