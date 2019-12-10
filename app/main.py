@@ -104,8 +104,6 @@ def verify():
         flash('Token is either invalid or has expired.', 'error')
         return redirect(url_for('login'))
     user.is_verified = True
-    # TODO check token expiration + reset token function
-    user.token = ''
     db.session.commit()
     flash('Your account has been verified. You can login now.', 'success')
     return redirect(url_for('login'))
