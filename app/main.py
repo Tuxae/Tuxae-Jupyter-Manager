@@ -87,6 +87,8 @@ def register():
         return redirect(url_for('register'))
     new_user = create_user(db, email, password)
     send_register_mail(mail, new_user)
+    flash('Your account has been created. Check your email to verify your account. Do not forget to check in SPAM as '
+          'well.', 'success')
     return redirect(url_for('index'))
 
 
