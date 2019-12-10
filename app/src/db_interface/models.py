@@ -1,7 +1,4 @@
 from hashlib import md5
-from random import choice
-from string import ascii_uppercase, digits
-from datetime import datetime
 
 from flask import flash, redirect, url_for
 from flask_admin import AdminIndexView, expose
@@ -13,6 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from src.db_interface.config import pwd_context
 from src.db_interface.secret import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD
 from src.mail.parser import email_validator, parse_valid_email, EmailException
+from src.misc.functions import generate_token
 
 db = SQLAlchemy()
 
@@ -112,12 +110,13 @@ def create_default_user():
         raise EmailException
     username = parse_valid_email(DEFAULT_ADMIN_EMAIL)[0]
     logo_url = 'https://2.gravatar.com/avatar/{}?s=400&d=mm'.format(md5(DEFAULT_ADMIN_EMAIL.encode()).hexdigest())
+    token, token_expiration = generate_token()
     kwargs = {
         'username': username,
         'email': DEFAULT_ADMIN_EMAIL,
         'password': password,
-        'token': ''.join(choice(ascii_uppercase + digits) for _ in range(30)),
-        'token_expiration': datetime.now(),
+        'token': token,
+        'token_expiration': token_expiration,
         'logo_url': logo_url,
         'is_verified': True,
         'is_admin': True
