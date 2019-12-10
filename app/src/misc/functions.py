@@ -17,3 +17,9 @@ def get_logo_url(email: str) -> str:
 
 def sanitize_username(username: str) -> str:
     return username.replace('.', '')
+
+
+def generate_random_number() -> int:
+    number = ''.join(choice(digits) for _ in range(6))
+    return int(number)
+

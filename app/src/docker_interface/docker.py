@@ -4,7 +4,7 @@ import werkzeug.local
 from flask import flash
 
 from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
-from src.misc.functions import sanitize_username
+from src.misc.functions import sanitize_username, generate_random_number
 
 
 def get_docker_containers(docker_client: docker.client.DockerClient):
@@ -38,12 +38,17 @@ def check_image(image: str) -> bool:
 def deploy_container(docker_client: docker.client.DockerClient, image: str, current_user: werkzeug.local.LocalProxy) \
         -> None:
     username = sanitize_username(current_user.username)
+    random_number = generate_random_number()
+    host = f'{username}-{random_number}.{SERVER_DOMAIN}'
+    environment = [
+        f'VIRTUAL_HOST={host}',
+        f'LETSENCRYPT_HOST={host}',
+        f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}'
+    ]
+    volumes = {}
     if 'datascience-notebook' in image:
-        environment = [
-            f'VIRTUAL_HOST={username}.{SERVER_DOMAIN}',
+        environment += [
             f'VIRTUAL_PORT=8888',
-            f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}',
-            f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}',
             f'JUPYTER_ENABLE_LAB=yes'
         ]
         volumes = {
@@ -53,9 +58,6 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
                     'mode': 'rw'
                 }
         }
-    else:
-        environment = []
-        volumes = {}
     try:
         docker_client.containers.run(
             image,
