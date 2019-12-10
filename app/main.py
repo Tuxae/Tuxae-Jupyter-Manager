@@ -111,7 +111,8 @@ def restart_container(container_id: str):
 @app.route('/containers/<string:container_id>/stop', methods=['POST'])
 @login_required
 def stop_container(container_id: str):
-    docker_client.containers.get(container_id).stop()
+    if docker_client.containers.get(container_id).status == 'running':
+        docker_client.containers.get(container_id).stop()
     return redirect(url_for('index'))
 
 

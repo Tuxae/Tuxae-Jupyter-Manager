@@ -135,9 +135,23 @@
                             </form>
                           </div>
                           <div class="col-lg-3">
-                            <button onclick='javascript:flash_sweetalert2_width_plus(`<pre style="text-align: left"><code>{{ container.exec_run("env").output.decode() }}</code></pre><hr><pre style="text-align: left"><code>{{ container.logs().decode() }}</code></pre>`, "Information", "info")' class="btn btn-info btn-circle btn-lg" style="width: 3rem; height: 3rem">
+                            {% if container.status == 'running' %}
+                            <button onclick='javascript:flash_sweetalert2_width_plus(
+                            `<pre style="text-align: left"><code>{{ container.exec_run("env").output.decode() }}</code></pre><hr><pre style="text-align: left"><code>{{ container.logs().decode() }}</code></pre>`, "Information", "info")'
+                                    class="btn btn-info btn-circle btn-lg"
+                                    style="width: 3rem; height: 3rem"
+                            >
                               <i class="fas fa-info"></i>
                             </button>
+                            {% else %}
+                            <button onclick='javascript:flash_sweetalert2_width_plus(
+                            "Container is not running. You need to restart the container to show logs.", "Information", "info")'
+                                    class="btn btn-info btn-circle btn-lg"
+                                    style="width: 3rem; height: 3rem"
+                            >
+                              <i class="fas fa-info"></i>
+                            </button>
+                            {% endif %}
                           </div>
                           <div class="col-lg-3">
                             <form method="POST" action="/containers/{{container.id}}/stop">
