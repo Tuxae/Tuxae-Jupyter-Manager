@@ -74,6 +74,12 @@
                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                 Profile
               </a>
+              {% if current_user.is_admin %}
+              <a class="dropdown-item" href="/admin">
+                <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
+                Admin area
+              </a>
+              {% endif %}
               <a class="dropdown-item" href="/security">
                 <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                 Security
