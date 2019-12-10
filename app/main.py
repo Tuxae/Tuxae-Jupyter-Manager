@@ -58,6 +58,9 @@ def login():
         flash('A wrong form has been sent.', 'error')
         return redirect(url_for('index'))
     user = get_admin_user(request.form)
+    if not user.is_verified:
+        flash('Please verify your account before trying to login.', 'error')
+        return redirect(url_for('index'))
     if user is not None:
         login_user(user)
         if user.is_admin:
