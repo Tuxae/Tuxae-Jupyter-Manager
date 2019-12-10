@@ -76,7 +76,8 @@ def create_container():
             f'VIRTUAL_HOST={username}.{SERVER_DOMAIN}',
             f'VIRTUAL_PORT=8888',
             f'LETSENCRYPT_HOST={username}.{SERVER_DOMAIN}',
-            f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}'
+            f'LETSENCRYPT_EMAIL={DEFAULT_ADMIN_EMAIL}',
+            f'JUPYTER_ENABLE_LAB=yes'
         ]
         docker_client.containers.run(
             image,
