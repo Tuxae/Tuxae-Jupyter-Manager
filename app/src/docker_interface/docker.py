@@ -1,6 +1,6 @@
 import docker.client
 import docker.errors
-import docker.models
+import docker.models.containers
 import werkzeug.local
 from flask import flash
 import multiprocessing
