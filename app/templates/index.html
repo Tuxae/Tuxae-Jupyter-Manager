@@ -124,6 +124,9 @@
               <table class="table table-bordered" id="dataTable" data-order="[]" width="100%" cellspacing="0">
                 <thead>
                   <tr>
+                    {% if current_user.is_admin %}
+                      <th>User</th>
+                    {% endif %}
                     <th>Name</th>
                     <th>Image</th>
                     <th>Status</th>
@@ -133,6 +136,9 @@
                 <tbody>
                   {% for container in containers %}
                   <tr>
+                      {% if current_user.is_admin %}
+                        <td>{{ container.user.name }}</td>
+                      {% endif %}
                       <td>{{ container.name }}</td>
                       <td>{{ container.image.tags.0 }}</td>
                       <td>{{ container.status }}</td>
@@ -189,6 +195,9 @@
                   {% endfor %}
                   <tr>
                       <form action="/containers/create" method="POST" id="runform">
+                          {% if current_user.is_admin %}
+                            <td></td>
+                          {% endif %}
                           <td></td>
                           <td>
                               <label>

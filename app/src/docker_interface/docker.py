@@ -28,6 +28,8 @@ def get_docker_containers(docker_client: docker.client.DockerClient, user: Users
             continue
         if not user.is_admin and container.id not in docker_container_ids:
             continue
+        container.user = lambda: None
+        container.user.name = user.username
         containers.append(container)
     return containers
 
