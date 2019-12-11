@@ -1,9 +1,11 @@
 import docker.client
 import docker.errors
+import docker.models
 import werkzeug.local
 from flask import flash
 import multiprocessing
 from psutil import virtual_memory
+from typing import Optional
 
 
 from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
@@ -39,7 +41,7 @@ def check_image(image: str) -> bool:
 
 
 def deploy_container(docker_client: docker.client.DockerClient, image: str, current_user: werkzeug.local.LocalProxy) \
-        -> None:
+        -> Optional[docker.models.containers.Container]:
     cpus = int(multiprocessing.cpu_count() / 2)  # 50% of cpu
     mem = int(virtual_memory().total / 10 ** 6 / 4)  # 25% of total physical memory available (Mega)
 
@@ -65,7 +67,7 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
                 }
         }
     try:
-        docker_client.containers.run(
+        container = docker_client.containers.run(
             image,
             detach=True,
             environment=environment,
@@ -84,6 +86,7 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
               f'Your container service will be available soon:<br>'
               f'<a href="https://{host}">https://{host}</a><br>'
               f'Check logs for more information.', 'success')
+        return container
     except docker.errors.ContainerError:
         flash('Container Error', 'error')
     except docker.errors.ImageNotFound:

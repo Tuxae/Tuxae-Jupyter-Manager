@@ -67,7 +67,7 @@ def create_container():
         #  image is not from registry
         flash('A wrong form has been sent.', 'error')
         return redirect(url_for('index'))
-    deploy_container(docker_client, image, current_user)
+    container = deploy_container(docker_client, image, current_user)
     return redirect(url_for('index'))
 
 
