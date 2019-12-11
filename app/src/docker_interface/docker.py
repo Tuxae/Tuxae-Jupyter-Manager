@@ -71,7 +71,10 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             environment=environment,
             volumes=volumes,
             cpu_count=cpus,
-            mem_limit=f'{mem}m'
+            mem_limit=f'{mem}m',
+            storage_opt={
+                'size': '10G'
+            }
         )
         flash(f'Container successfully created.<br>'
               f'Your container service will be available soon:<br>'
