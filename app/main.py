@@ -17,7 +17,8 @@ from src.db_interface.config import Config
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists, update_user_token, update_user_password, get_user_by_email
-from src.db_interface.containers import associate_user_container, docker_image_already_deployed_by_user
+from src.db_interface.containers import associate_user_container, docker_image_already_deployed_by_user, \
+    delete_association_user_container
 from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image, deploy_container
 from src.mail.sender import send_register_mail, send_forgot_password_mail
 
@@ -95,7 +96,9 @@ def stop_container(container_id: str):
 @app.route('/containers/<string:container_id>/delete', methods=['POST'])
 @login_required
 def delete_container(container_id: str):
-    docker_client.containers.get(container_id).remove(force=True)
+    container = docker_client.containers.get(container_id)
+    delete_association_user_container(db, container)
+    container.remove(force=True)
     return redirect(url_for('index'))
 
 
