@@ -41,6 +41,18 @@ class WhitelistDomains(db.Model, UserMixin):
         return f'<{self.__class__.__name__} {self.domain}>'
 
 
+class DockerContainers(db.Model, UserMixin):
+    __tablename__ = 'docker_containers'
+    id = db.Column(db.Integer, primary_key=True)
+    id_container = db.Column(db.String(200), unique=True, nullable=False)  # docker container id (not short_id)
+    name = db.Column(db.String(200), unique=False, nullable=False)
+    user = db.relationship("Users")
+    id_user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} {self.name} ({self.id_container})>'
+
+
 class UsersModelView(ModelView):
     page_size = 5
     column_searchable_list = ['username']
@@ -58,6 +70,18 @@ class UsersModelView(ModelView):
 class WhitelistDomainsModelView(ModelView):
     page_size = 5
     column_searchable_list = ['domain']
+
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin
+
+    def inaccessible_callback(self, username, **kwargs):
+        flash('Access forbidden ! You are not an administrator.', 'error')
+        return redirect(url_for('index'))
+
+
+class DockerContainersModelView(ModelView):
+    page_size = 5
+    column_searchable_list = ['id_container', 'name', 'user.email']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
