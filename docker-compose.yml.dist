@@ -48,5 +48,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /opt/database:/app/database:rw
+      - /mnt:/mnt:rw
     links:
       - nginx-proxy-letsencrypt

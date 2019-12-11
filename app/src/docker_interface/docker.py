@@ -5,6 +5,7 @@ import docker.client
 import docker.errors
 import docker.models.containers
 import docker.models.images
+import os
 import werkzeug.local
 from flask import flash
 from psutil import virtual_memory
@@ -70,13 +71,17 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             f'VIRTUAL_PORT=8888',
             f'JUPYTER_ENABLE_LAB=yes'
         ]
+        path = f'/mnt/{username}'
         volumes = {
-            f'/mnt/{username}':
+            path:
                 {
                     'bind': '/home/jovyan/work',
                     'mode': 'rw'
                 }
         }
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        os.chmod(path, 0o777)
     try:
         container = docker_client.containers.run(
             image,

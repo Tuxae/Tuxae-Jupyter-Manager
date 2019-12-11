@@ -86,6 +86,7 @@ docker run --detach \
 	--name webapp \
 	--volume /var/run/docker.sock:/var/run/docker.sock:ro \
 	--volume /opt/database:/app/database:rw \
+	--volume /mnt:/mnt:rw \
 	--env "VIRTUAL_PORT=80" \
       	--env "VIRTUAL_HOST=subdomain.domain.tld" \
       	--env "LETSENCRYPT_HOST=subdomain.domain.tld" \
