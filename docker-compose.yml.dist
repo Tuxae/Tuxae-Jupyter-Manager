@@ -47,5 +47,6 @@ services:
       - SERVER_DOMAIN=<DOMAIN>
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /opt/database:/app/database:rw
     links:
       - nginx-proxy-letsencrypt
