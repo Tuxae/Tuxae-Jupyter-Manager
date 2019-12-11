@@ -47,6 +47,7 @@ class DockerContainers(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     id_container = db.Column(db.String(200), unique=True, nullable=False)  # docker container id (not short_id)
     name = db.Column(db.String(200), unique=False, nullable=False)
+    image = db.Column(db.String(200), unique=False, nullable=False)
     user = db.relationship('Users', backref=backref('docker_containers', cascade="all,delete"))
     id_user = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
@@ -82,7 +83,7 @@ class WhitelistDomainsModelView(ModelView):
 
 class DockerContainersModelView(ModelView):
     page_size = 5
-    column_searchable_list = ['id_container', 'name', 'user.email']
+    column_searchable_list = ['id_container', 'name', 'image', 'user.email']
 
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
