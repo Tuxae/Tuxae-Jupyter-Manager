@@ -2,6 +2,9 @@ import docker.client
 import docker.errors
 import werkzeug.local
 from flask import flash
+import multiprocessing
+from psutil import virtual_memory
+
 
 from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
 from src.misc.functions import sanitize_username, generate_random_number
@@ -37,6 +40,9 @@ def check_image(image: str) -> bool:
 
 def deploy_container(docker_client: docker.client.DockerClient, image: str, current_user: werkzeug.local.LocalProxy) \
         -> None:
+    cpus = int(multiprocessing.cpu_count() / 2)  # 50% of cpu
+    mem = int(virtual_memory().total / 10 ** 6 / 4)  # 25% of total physical memory available (Mega)
+
     username = sanitize_username(current_user.username)
     random_number = generate_random_number()
     host = f'{username}-{random_number}.{SERVER_DOMAIN}'
@@ -63,7 +69,9 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             image,
             detach=True,
             environment=environment,
-            volumes=volumes
+            volumes=volumes,
+            cpu_count=cpus,
+            mem_limit=f'{mem}m'
         )
         flash(f'Container successfully created.<br>'
               f'Your container service will be available soon:<br>'

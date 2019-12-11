@@ -6,3 +6,4 @@ flask-sqlalchemy
 flask-mail
 passlib
 python-dotenv
+psutil
