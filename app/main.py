@@ -16,7 +16,8 @@ from src.auth.token import check_token
 from src.db_interface.config import Config
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
-from src.db_interface.users import create_user, user_exists, update_user_token, update_user_password
+from src.db_interface.users import create_user, user_exists, update_user_token, update_user_password, get_user_by_email
+from src.db_interface.containers import associate_user_container, docker_image_already_deployed_by_user
 from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image, deploy_container
 from src.mail.sender import send_register_mail, send_forgot_password_mail
 
@@ -67,7 +68,12 @@ def create_container():
         #  image is not from registry
         flash('A wrong form has been sent.', 'error')
         return redirect(url_for('index'))
+    user = get_user_by_email(current_user.email)
+    if not current_user.is_admin and not docker_image_already_deployed_by_user(db, user, image):
+        flash('You cannot run several containers from the same docker image with a non-admin account.', 'error')
+        return redirect(url_for('index'))
     container = deploy_container(docker_client, image, current_user)
+    associate_user_container(db, user, container, image)
     return redirect(url_for('index'))
 
 

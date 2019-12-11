@@ -27,8 +27,12 @@ def create_user(db: SQLAlchemy, email: str, password: str) -> Users:
     return user
 
 
+def get_user_by_email(email: str) -> Users:
+    return Users.query.filter_by(email=email).first()
+
+
 def user_exists(email: str) -> bool:
-    return Users.query.filter_by(email=email).first() is not None
+    return get_user_by_email(email) is not None
 
 
 def update_user_token(db: SQLAlchemy, email: str) -> Users:
