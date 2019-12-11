@@ -38,3 +38,14 @@ def update_user_token(db: SQLAlchemy, email: str) -> Users:
     user.token_expiration = token_expiration
     db.session.commit()
     return user
+
+
+def update_user_password(db: SQLAlchemy, user: Users, password: str) -> None:
+    password = pwd_context.hash(password.encode())
+    # update password
+    user.password = password
+    # reset token
+    token, token_expiration = generate_token()
+    user.token = token
+    user.token_expiration = token_expiration
+    db.session.commit()
