@@ -71,11 +71,15 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             environment=environment,
             volumes=volumes,
             cpu_count=cpus,
-            mem_limit=f'{mem}m',
-            storage_opt={
-                'size': '10G'
-            }
+            mem_limit=f'{mem}m'
         )
+        """
+        storage_opt={
+            'size': '10G'
+        }
+        TODO: find a way to use storage-opt
+        --storage-opt is supported only for overlay over xfs with 'pquota' mount option
+        """
         flash(f'Container successfully created.<br>'
               f'Your container service will be available soon:<br>'
               f'<a href="https://{host}">https://{host}</a><br>'
