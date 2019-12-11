@@ -177,14 +177,14 @@
                       <td>{{ container.status }}</td>
                       <td>
                         <div class="row">
-                          <div class="col-lg-3">
+                          <div class="col-lg-3" style="padding-left: .25rem">
                             <form method="POST" action="/containers/{{container.id}}/restart">
                               <button type="submit" class="btn btn-success btn-circle btn-lg" style="width: 3rem; height: 3rem">
                                 <i class="fas fa-check"></i>
                               </button>
                             </form>
                           </div>
-                          <div class="col-lg-3">
+                          <div class="col-lg-3" style="padding-left: .25rem">
                             {% if container.status == 'running' %}
                             <button onclick='javascript:flash_sweetalert2_width_plus(
                             `<pre style="text-align: left"><code>{{ container.exec_run("env").output.decode() }}</code></pre><hr><pre style="text-align: left"><code>{{ container.logs().decode() }}</code></pre>`,
@@ -209,14 +209,14 @@
                             </button>
                             {% endif %}
                           </div>
-                          <div class="col-lg-3">
+                          <div class="col-lg-3" style="padding-left: .25rem">
                             <form method="POST" action="/containers/{{container.id}}/stop">
                               <button type="submit" class="btn btn-warning btn-circle btn-lg" style="width: 3rem; height: 3rem">
                                 <i class="fas fa-hand-paper"></i>
                               </button>
                             </form>
                           </div>
-                          <div class="col-lg-3">
+                          <div class="col-lg-3" style="padding-left: .25rem">
                             <form method="POST" action="/containers/{{container.id}}/delete">
                               <button type="submit" class="btn btn-danger btn-circle btn-lg" style="width: 3rem; height: 3rem">
                                 <i class="fas fa-trash"></i>
