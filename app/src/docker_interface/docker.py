@@ -10,28 +10,36 @@ from flask import flash
 from psutil import virtual_memory
 
 from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
+from src.db_interface.models import Users
+from src.db_interface.containers import get_containers_by_user_email
 from src.misc.functions import sanitize_username, generate_random_number
 
 
-def get_docker_containers(docker_client: docker.client.DockerClient) -> List[docker.models.containers.Container]:
+def get_docker_containers(docker_client: docker.client.DockerClient, user: Users) \
+        -> List[docker.models.containers.Container]:
     all_containers = docker_client.containers.list(all=True)
+    docker_containers = get_containers_by_user_email(user.email)
+    docker_container_ids = [docker_container.id_container for docker_container in docker_containers]
     containers = []
     for container in all_containers:
         if not container.image.tags:
             continue
         if not container.image.tags[0].startswith(DOCKER_REGISTRY_URI):
             continue
+        if not user.is_admin and container.id not in docker_container_ids:
+            continue
         containers.append(container)
     return containers
 
 
-def get_docker_images(docker_client: docker.client.DockerClient) -> List[docker.models.images.Image]:
+def get_docker_images(docker_client: docker.client.DockerClient, user: Users) -> List[docker.models.images.Image]:
     all_images = docker_client.images.list()
     images = []
     for image in all_images:
         if not image.attrs['RepoTags']:
             continue
-        if not image.attrs['RepoTags'][0].startswith(DOCKER_REGISTRY_URI):
+        image_name = image.attrs['RepoTags'][0]
+        if not image_name.startswith(DOCKER_REGISTRY_URI):
             continue
         images.append(image)
     return images

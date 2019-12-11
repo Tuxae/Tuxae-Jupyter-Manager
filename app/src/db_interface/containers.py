@@ -1,5 +1,6 @@
 import docker.models.containers
 from flask_sqlalchemy import SQLAlchemy
+from typing import List
 
 from src.db_interface.models import DockerContainers, Users
 
@@ -29,3 +30,9 @@ def docker_image_already_deployed_by_user(db: SQLAlchemy, user: Users, image: st
 def delete_association_user_container(db: SQLAlchemy, container: docker.models.containers.Container) -> None:
     DockerContainers.query.filter_by(id_container=container.id).delete()
     db.session.commit()
+
+
+def get_containers_by_user_email(email: str) -> List[DockerContainers]:
+    return DockerContainers.query.join(Users, Users.id == DockerContainers.id_user). \
+        filter(Users.email == email). \
+        all()

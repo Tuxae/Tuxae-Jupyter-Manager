@@ -53,8 +53,9 @@ def login_required(f):
 @app.route('/', methods=['GET'])
 @login_required
 def index():
-    containers = get_docker_containers(docker_client)
-    images = get_docker_images(docker_client)
+    user = get_user_by_email(current_user.email)
+    containers = get_docker_containers(docker_client, user)
+    images = get_docker_images(docker_client, user)
     return render_template('index.html', containers=containers, images=images)
 
 
