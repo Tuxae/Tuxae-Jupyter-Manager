@@ -67,18 +67,6 @@ class WhitelistDomainsModelView(ModelView):
         return redirect(url_for('index'))
 
 
-class DefaultModelView(ModelView):
-    page_size = 5
-    column_searchable_list = ['username']
-
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.is_admin
-
-    def inaccessible_callback(self, username, **kwargs):
-        flash('Access forbidden ! You are not an administrator.', 'error')
-        return redirect(url_for('index'))
-
-
 class MyAdminView(AdminIndexView):
 
     @expose('/')
