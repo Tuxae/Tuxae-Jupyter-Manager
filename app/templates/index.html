@@ -114,6 +114,39 @@
           </p>
         </div>
 
+        <!-- Image form block -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Choose a docker image from local registry</h6>
+          </div>
+          <div class="card-body">
+            <form action="/containers/create" method="POST" id="runform">
+              <div class="row">
+                <div class="col-lg-8">
+                  <label>
+                    <select required=true form="runform" name="image">
+                      {% for image in images %}
+                      <option>{{ image.tags.0 }}</option>
+                      {% endfor %}
+                    </select>
+                  </label>
+                </div>
+                <div class="col-lg-4">
+                  <a onclick='javascript:document.getElementById("runform").submit();'
+                     class="btn btn-success btn-icon-split"
+                     style="cursor: pointer"
+                  >
+                    <span class="icon text-white-50">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text" style="color: white">Run</span>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
         <!-- DataTales Example -->
         <div class="card shadow mb-4">
           <div class="card-header py-3">
@@ -193,32 +226,6 @@
                       </td>
                   </tr>
                   {% endfor %}
-                  <tr>
-                      <form action="/containers/create" method="POST" id="runform">
-                          {% if current_user.is_admin %}
-                            <td></td>
-                          {% endif %}
-                          <td></td>
-                          <td>
-                              <label>
-                                <select required=true form="runform" name="image">
-                                  {% for image in images %}
-                                      <option>{{ image.tags.0 }}</option>
-                                  {% endfor %}
-                                </select>
-                              </label>
-                          </td>
-                          <td>
-                            <a onclick='javascript:document.getElementById("runform").submit();' class="btn btn-success btn-icon-split" style="cursor: pointer">
-                              <span class="icon text-white-50">
-                                <i class="fas fa-check"></i>
-                              </span>
-                              <span class="text" style="color: white">Run</span>
-                            </a>
-                          </td>
-                          <td></td>
-                      </form>
-                  </tr>
                 </tbody>
               </table>
             </div>
