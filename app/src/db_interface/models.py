@@ -4,6 +4,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import UserMixin
 from flask_login.utils import current_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import backref
 
 from src.db_interface.config import pwd_context
 from src.db_interface.secret import DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD
@@ -46,8 +47,8 @@ class DockerContainers(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     id_container = db.Column(db.String(200), unique=True, nullable=False)  # docker container id (not short_id)
     name = db.Column(db.String(200), unique=False, nullable=False)
-    user = db.relationship("Users")
-    id_user = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('Users', backref=backref('docker_containers', cascade="all,delete"))
+    id_user = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {self.name} ({self.id_container})>'
