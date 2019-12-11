@@ -29,3 +29,12 @@ def create_user(db: SQLAlchemy, email: str, password: str) -> Users:
 
 def user_exists(email: str) -> bool:
     return Users.query.filter_by(email=email).first() is not None
+
+
+def update_user_token(db: SQLAlchemy, email: str) -> Users:
+    user = Users.query.filter_by(email=email).first()
+    token, token_expiration = generate_token()
+    user.token = token
+    user.token_expiration = token_expiration
+    db.session.commit()
+    return user

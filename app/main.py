@@ -16,9 +16,9 @@ from src.auth.token import check_token
 from src.db_interface.config import Config
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
-from src.db_interface.users import create_user, user_exists
+from src.db_interface.users import create_user, user_exists, update_user_token
 from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image, deploy_container
-from src.mail.sender import send_register_mail
+from src.mail.sender import send_register_mail, send_forgot_password_mail
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -159,6 +159,15 @@ def verify():
 def forgot_password():
     if request.method == "GET":
         return render_template('forgot-password.html')
+    if list(request.form.keys()) != ['email']:
+        flash('A wrong form has been sent.', 'error')
+        return redirect(url_for('index'))
+    email = request.form['email']
+    flash(f'A reset password link has been sent to {email} if an account exists with this email.', 'success')
+    if not user_exists(email):
+        return render_template('forgot-password.html')
+    user = update_user_token(db, email)
+    send_forgot_password_mail(mail, user)
     return render_template('forgot-password.html')
 
 

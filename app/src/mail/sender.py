@@ -17,3 +17,18 @@ If you received this by mistake or weren't expecting it, please disregard this e
 '''
     subject = 'Verify your Tuxae Jupyter Manager account'
     mail.send_message(subject, sender=MAIL_USERNAME, recipients=[user.email], html=html)
+
+
+def send_forgot_password_mail(mail: flask_mail.Mail, user: Users) -> None:
+    html = f'''Hello {user.username},<br>
+<br>
+You just ask to reset your password from your account!<br>
+You can use the link below:<br>
+<a href="{EXTERNAL_URI}/reset-password?token={user.token}">{EXTERNAL_URI}/reset-password?token={user.token}</a><br>
+<br>
+Not expecting this email?<br>
+If you received this by mistake or weren't expecting it, please disregard this email.<br>
+<br>
+'''
+    subject = 'Reset your password from your Tuxae Jupyter Manager account'
+    mail.send_message(subject, sender=MAIL_USERNAME, recipients=[user.email], html=html)
