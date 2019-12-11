@@ -101,6 +101,9 @@ def login():
         flash('A wrong form has been sent.', 'error')
         return redirect(url_for('index'))
     user = get_admin_user(request.form)
+    if user is None:
+        flash('Invalid credentials.', 'error')
+        return redirect(url_for('index'))
     if not user.is_verified:
         flash('Please verify your account before trying to login.', 'error')
         return redirect(url_for('index'))
