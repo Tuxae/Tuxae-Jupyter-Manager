@@ -52,7 +52,7 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             f'JUPYTER_ENABLE_LAB=yes'
         ]
         volumes = {
-            f'/home/{username}':
+            f'/mnt/{username}':
                 {
                     'bind': '/home/jovyan/work',
                     'mode': 'rw'
