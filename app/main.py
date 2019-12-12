@@ -19,7 +19,8 @@ from src.db_interface.containers import associate_user_container, docker_image_a
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists, update_user_token, update_user_password, get_user_by_email
-from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image, deploy_container
+from src.docker_interface.docker import get_docker_containers, get_docker_containers_ids, get_docker_images, \
+    check_image, deploy_container
 from src.mail.sender import send_register_mail, send_forgot_password_mail
 
 app = Flask(__name__)
@@ -82,6 +83,11 @@ def create_container():
 @app.route('/containers/<string:container_id>/restart', methods=['POST'])
 @login_required
 def restart_container(container_id: str):
+    user = get_user_by_email(current_user.email)
+    containers_ids = get_docker_containers_ids(docker_client, user)
+    if container_id not in containers_ids:
+        flash('You do not own this container. Access forbidden.', 'error')
+        return redirect(url_for('index'))
     docker_client.containers.get(container_id).start()
     return redirect(url_for('index'))
 
@@ -89,6 +95,11 @@ def restart_container(container_id: str):
 @app.route('/containers/<string:container_id>/stop', methods=['POST'])
 @login_required
 def stop_container(container_id: str):
+    user = get_user_by_email(current_user.email)
+    containers_ids = get_docker_containers_ids(docker_client, user)
+    if container_id not in containers_ids:
+        flash('You do not own this container. Access forbidden.', 'error')
+        return redirect(url_for('index'))
     if docker_client.containers.get(container_id).status == 'running':
         docker_client.containers.get(container_id).stop()
     return redirect(url_for('index'))
@@ -97,6 +108,11 @@ def stop_container(container_id: str):
 @app.route('/containers/<string:container_id>/delete', methods=['POST'])
 @login_required
 def delete_container(container_id: str):
+    user = get_user_by_email(current_user.email)
+    containers_ids = get_docker_containers_ids(docker_client, user)
+    if container_id not in containers_ids:
+        flash('You do not own this container. Access forbidden.', 'error')
+        return redirect(url_for('index'))
     container = docker_client.containers.get(container_id)
     delete_association_user_container(db, container)
     container.remove(force=True)

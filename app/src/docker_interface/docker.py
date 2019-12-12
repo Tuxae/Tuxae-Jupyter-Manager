@@ -35,6 +35,11 @@ def get_docker_containers(docker_client: docker.client.DockerClient, user: Users
     return containers
 
 
+def get_docker_containers_ids(docker_client: docker.client.DockerClient, user: Users) -> List[str]:
+    containers = get_docker_containers(docker_client, user)
+    return [container.id for container in containers]
+
+
 def get_docker_images(docker_client: docker.client.DockerClient) -> List[docker.models.images.Image]:
     all_images = docker_client.images.list()
     images = []
