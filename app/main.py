@@ -19,6 +19,7 @@ from src.db_interface.containers import associate_user_container, docker_image_a
     delete_association_user_container
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
+from src.db_interface.report_message import save_report_message
 from src.db_interface.users import create_user, user_exists, update_user_token, update_user_password, get_user_by_email
 from src.docker_interface.docker import get_docker_containers, get_docker_containers_ids, get_docker_images, \
     check_image, deploy_container
@@ -136,6 +137,22 @@ def get_container_logs(container_id: str) -> Dict[str, str]:
     html = f'<pre style="text-align: left"><code>{container.exec_run("env").output.decode()}</code></pre>' \
         f'<hr><pre style="text-align: left"><code>{container.logs().decode()}</code></pre>'
     return jsonify(dict(html=html))
+
+
+@app.route('/report', methods=['POST'])
+@login_required
+def report_message():
+    if list(request.json.keys()) != ['message']:
+        response = dict(content='A wrong form has been sent.', category='error')
+        return jsonify(response)
+    message = request.json['message']
+    if len(message) >= 500:
+        response = dict(content='The message can not exceed 500 characters.', category='error')
+        return jsonify(response)
+    user = get_user_by_email(current_user.email)
+    save_report_message(db, user, message)
+    response = dict(content='Your message has been sent successfully.', category='success')
+    return jsonify(response)
 
 
 @app.route('/login', methods=['GET', 'POST'])

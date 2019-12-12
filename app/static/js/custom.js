@@ -37,3 +37,42 @@ function sweetalert2_docker_logs(container_id, title, category) {
       }
     });
 }
+
+
+async function sweetalert2_report_message() {
+    const { value: text } = await Swal.fire({
+      input: 'textarea',
+      inputPlaceholder: 'Type your message here...',
+      inputAttributes: {
+        'aria-label': 'Type your message here'
+      },
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!'
+        }
+      }
+    })
+
+    if (text) {
+      fetch('report',
+      {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: JSON.stringify({message: text})
+      }).then(response => {
+        if (response.ok) {
+          response.json().then(json => {
+            Swal.fire({
+              type: json.category,
+              title: "Information",
+              html: he.decode(json.content),
+            });
+          });
+        }
+      });
+    }
+}
