@@ -1,9 +1,10 @@
 from functools import wraps
+from typing import Dict
 
 import docker.errors
 import werkzeug.exceptions
 from flask import Flask
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, jsonify
 from flask_admin import Admin
 from flask_login import LoginManager
 from flask_login.utils import current_user, login_user, logout_user
@@ -117,6 +118,24 @@ def delete_container(container_id: str):
     delete_association_user_container(db, container)
     container.remove(force=True)
     return redirect(url_for('index'))
+
+
+@app.route('/containers/<string:container_id>/logs', methods=['GET'])
+@login_required
+def get_container_logs(container_id: str) -> Dict[str, str]:
+    #  This function is used as an API endpoint for javascript functions
+    user = get_user_by_email(current_user.email)
+    containers_ids = get_docker_containers_ids(docker_client, user)
+    if container_id not in containers_ids:
+        html = 'You do not own this container. Access forbidden'
+        return jsonify(dict(html=html))
+    container = docker_client.containers.get(container_id)
+    if container.status != 'running':
+        html = 'Container is not running. You need to restart the container to show logs.'
+        return jsonify(dict(html=html))
+    html = f'<pre style="text-align: left"><code>{container.exec_run("env").output.decode()}</code></pre>' \
+        f'<hr><pre style="text-align: left"><code>{container.logs().decode()}</code></pre>'
+    return jsonify(dict(html=html))
 
 
 @app.route('/login', methods=['GET', 'POST'])
