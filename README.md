@@ -19,7 +19,7 @@ See [https://letsencrypt.org/docs/caa/](https://letsencrypt.org/docs/caa/) for m
 
 ## Install
 
-- `cp docker-compose.yml{,.dist}`
+- `cp docker-compose.yml{.dist,}`
 - Update emails/passwords configuration
 - `MAIL_USERNAME` has to be a gmail email
 - Use [start.sh](./start.sh)
