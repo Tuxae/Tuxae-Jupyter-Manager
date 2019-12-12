@@ -37,3 +37,12 @@ def get_containers_by_user_email(email: str) -> List[DockerContainers]:
     return DockerContainers.query.join(Users, Users.id == DockerContainers.id_user). \
         filter(Users.email == email). \
         all()
+
+
+def get_container_owner(container_id: str) -> str:
+    user = Users.query.join(DockerContainers, DockerContainers.id_user == Users.id). \
+        filter(DockerContainers.id_container == container_id). \
+        first()
+    if user is None:
+        return ''
+    return user.username

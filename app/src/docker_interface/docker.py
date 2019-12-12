@@ -10,7 +10,7 @@ import werkzeug.local
 from flask import flash
 from psutil import virtual_memory
 
-from src.db_interface.containers import get_containers_by_user_email
+from src.db_interface.containers import get_containers_by_user_email, get_container_owner
 from src.db_interface.models import Users
 from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
 from src.misc.functions import sanitize_username, generate_random_number
@@ -29,8 +29,7 @@ def get_docker_containers(docker_client: docker.client.DockerClient, user: Users
             continue
         if not user.is_admin and container.id not in docker_container_ids:
             continue
-        container.user = lambda: None
-        container.user.name = user.username
+        container.owner = get_container_owner(container.id)
         containers.append(container)
     return containers
 

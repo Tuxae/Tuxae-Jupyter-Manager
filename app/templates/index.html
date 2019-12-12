@@ -166,7 +166,7 @@
                   {% for container in containers %}
                   <tr>
                       {% if current_user.is_admin %}
-                        <td>{{ container.user.name }}</td>
+                        <td>{{ container.owner }}</td>
                       {% endif %}
                       <td>{{ container.name }}</td>
                       <td>{{ container.image.tags.0 }}</td>
