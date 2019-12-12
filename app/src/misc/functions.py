@@ -19,6 +19,12 @@ def sanitize_username(username: str) -> str:
     return username.replace('.', '')
 
 
+def sanitize_email(email: str) -> str:
+    for char in ['.', '@', '-', '_']:
+        email = email.replace(char, '')
+    return email
+
+
 def generate_random_number() -> int:
     number = ''.join(choice(digits) for _ in range(6))
     return int(number)

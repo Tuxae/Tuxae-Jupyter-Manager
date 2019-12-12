@@ -13,7 +13,7 @@ from psutil import virtual_memory
 from src.db_interface.containers import get_containers_by_user_email, get_container_owner
 from src.db_interface.models import Users
 from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
-from src.misc.functions import sanitize_username, generate_random_number
+from src.misc.functions import sanitize_username, sanitize_email, generate_random_number
 
 
 def get_docker_containers(docker_client: docker.client.DockerClient, user: Users) \
@@ -75,7 +75,8 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             f'VIRTUAL_PORT=8888',
             f'JUPYTER_ENABLE_LAB=yes'
         ]
-        path = f'/opt/users/{username}'
+        folder_name = sanitize_email(current_user.email)
+        path = f'/opt/users/{folder_name}'
         volumes = {
             path:
                 {
