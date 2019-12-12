@@ -1,6 +1,7 @@
+from typing import List
+
 import docker.models.containers
 from flask_sqlalchemy import SQLAlchemy
-from typing import List
 
 from src.db_interface.models import DockerContainers, Users
 

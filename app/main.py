@@ -14,11 +14,11 @@ from src.auth.auth import is_fake_login_form, get_admin_user
 from src.auth.form import is_fake_register_form, is_fake_reset_password_form, password_validator
 from src.auth.token import check_token
 from src.db_interface.config import Config
+from src.db_interface.containers import associate_user_container, docker_image_already_deployed_by_user, \
+    delete_association_user_container
 from src.db_interface.domains import check_whitelist_domain
 from src.db_interface.models import initialize_db, Users, MyAdminView
 from src.db_interface.users import create_user, user_exists, update_user_token, update_user_password, get_user_by_email
-from src.db_interface.containers import associate_user_container, docker_image_already_deployed_by_user, \
-    delete_association_user_container
 from src.docker_interface.docker import get_docker_containers, get_docker_images, check_image, deploy_container
 from src.mail.sender import send_register_mail, send_forgot_password_mail
 
@@ -55,7 +55,7 @@ def login_required(f):
 def index():
     user = get_user_by_email(current_user.email)
     containers = get_docker_containers(docker_client, user)
-    images = get_docker_images(docker_client, user)
+    images = get_docker_images(docker_client)
     return render_template('index.html', containers=containers, images=images)
 
 

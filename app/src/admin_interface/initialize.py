@@ -1,8 +1,8 @@
+from flask_admin import base
+from flask_sqlalchemy import SQLAlchemy
+
 from src.db_interface.models import Users, UsersModelView, WhitelistDomains, WhitelistDomainsModelView, \
     DockerContainers, DockerContainersModelView
-
-from flask_sqlalchemy import SQLAlchemy
-from flask_admin import base
 
 
 def initialize_admin(admin: base.Admin, db: SQLAlchemy):

@@ -1,6 +1,7 @@
+from os import environ
 from random import choice
 from string import ascii_uppercase, digits
-from os import environ
+
 from dotenv import load_dotenv
 
 load_dotenv()

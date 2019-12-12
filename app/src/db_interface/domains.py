@@ -1,5 +1,5 @@
-from src.mail.parser import parse_valid_email
 from src.db_interface.models import WhitelistDomains
+from src.mail.parser import parse_valid_email
 
 
 def check_whitelist_domain(email: str) -> bool:

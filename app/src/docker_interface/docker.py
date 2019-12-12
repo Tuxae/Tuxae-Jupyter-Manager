@@ -1,18 +1,18 @@
 import multiprocessing
+import os
 from typing import List, Optional
 
 import docker.client
 import docker.errors
 import docker.models.containers
 import docker.models.images
-import os
 import werkzeug.local
 from flask import flash
 from psutil import virtual_memory
 
-from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
-from src.db_interface.models import Users
 from src.db_interface.containers import get_containers_by_user_email
+from src.db_interface.models import Users
+from src.db_interface.secret import DOCKER_REGISTRY_URI, SERVER_DOMAIN, DEFAULT_ADMIN_EMAIL
 from src.misc.functions import sanitize_username, generate_random_number
 
 
@@ -35,7 +35,7 @@ def get_docker_containers(docker_client: docker.client.DockerClient, user: Users
     return containers
 
 
-def get_docker_images(docker_client: docker.client.DockerClient, user: Users) -> List[docker.models.images.Image]:
+def get_docker_images(docker_client: docker.client.DockerClient) -> List[docker.models.images.Image]:
     all_images = docker_client.images.list()
     images = []
     for image in all_images:
