@@ -76,7 +76,7 @@ def deploy_container(docker_client: docker.client.DockerClient, image: str, curr
             f'VIRTUAL_PORT=8888',
             f'JUPYTER_ENABLE_LAB=yes'
         ]
-        path = f'/mnt/{username}'
+        path = f'/opt/users/{username}'
         volumes = {
             path:
                 {
