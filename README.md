@@ -118,7 +118,7 @@ docker run --detach \
 Use `--env "DEBUG=true"` while running `jrcs/letsencrypt-nginx-proxy-companion` \
 This link might help: [https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion/blob/master/docs/Invalid-authorizations.md](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion/blob/master/docs/Invalid-authorizations.md)
 
-### Additionnal information
+### Additionnal information 
 
 - [https://tevinjeffrey.me/how-to-setup-nginx-proxy-and-lets-encrypt-with-docker/](https://tevinjeffrey.me/how-to-setup-nginx-proxy-and-lets-encrypt-with-docker/)
 - [http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/](http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/)
